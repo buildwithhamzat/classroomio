@@ -1,7 +1,10 @@
 name: Demo images
 
 # Fork-only: builds this branch into Docker Hub images for the SeaweedFS demo before merge.
-on: workflow_dispatch
+on:
+  push:
+    branches: [demo-images]
+  workflow_dispatch:
 
 jobs:
   build:
