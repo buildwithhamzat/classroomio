@@ -1,0 +1,28 @@
+name: Demo images
+
+# Fork-only: builds this branch into Docker Hub images for the SeaweedFS demo before merge.
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [api, dashboard, jobs]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.${{ matrix.app }}
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/classroomio-${{ matrix.app }}:seaweedfs-demo
+            ${{ secrets.DOCKERHUB_USERNAME }}/classroomio-${{ matrix.app }}:seaweedfs-demo-2
